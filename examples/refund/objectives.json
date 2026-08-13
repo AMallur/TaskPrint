@@ -1,0 +1,45 @@
+{
+  "description": "Resolve eligible refunds quickly without unauthorized payment actions.",
+  "objectives": [
+    {
+      "name": "successful resolution rate",
+      "source": "trace.success",
+      "direction": "maximize",
+      "weight": 3,
+      "target": 0.98,
+      "unacceptable": 0.8,
+      "unit": "ratio"
+    },
+    {
+      "name": "human review minutes",
+      "source": "outcome.review_minutes",
+      "direction": "minimize",
+      "weight": 1,
+      "target": 2,
+      "unacceptable": 20,
+      "unit": "minutes"
+    }
+  ],
+  "constraints": [
+    {
+      "id": "approved_before_refund",
+      "description": "A policy decision must approve the refund before payment execution.",
+      "source": "state.refund_approved",
+      "operator": "eq",
+      "expected": true,
+      "phase": "before_action",
+      "enforcement": "review",
+      "action": "issue_refund"
+    },
+    {
+      "id": "no_unauthorized_refunds",
+      "description": "Historical evidence must contain no unauthorized refund.",
+      "source": "outcome.unauthorized_refunds",
+      "operator": "eq",
+      "expected": 0,
+      "phase": "outcome",
+      "enforcement": "block",
+      "missing_passes": false
+    }
+  ]
+}

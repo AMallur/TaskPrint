@@ -1,0 +1,81 @@
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "taskprint-ai"
+version = "0.3.0"
+description = "Induce and optimize constrained AI workflows from task demonstrations."
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "Apache-2.0"}
+authors = [{name = "Ashish Mallur"}]
+keywords = ["ai", "agents", "workflow", "process-mining", "automation"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "License :: OSI Approved :: Apache Software License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Typing :: Typed",
+]
+dependencies = ["pydantic>=2.7,<3", "typer>=0.12,<1"]
+
+[project.optional-dependencies]
+dev = [
+  "bandit[toml]>=1.7",
+  "build>=1.2",
+  "mypy>=1.11",
+  "pip-audit>=2.7",
+  "pytest>=8",
+  "pytest-cov>=5",
+  "ruff>=0.6",
+  "twine>=5",
+]
+
+[project.scripts]
+taskprint = "taskprint.cli:app"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/taskprint"]
+
+[tool.hatch.build]
+exclude = [
+  "/.coverage",
+  "/.pytest_cache",
+  "/.ruff_cache",
+  "/.mypy_cache",
+  "/dist",
+  "/*.zip",
+  "**/__pycache__",
+  "**/*.pyc",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--strict-markers --strict-config"
+
+[tool.coverage.run]
+branch = true
+source = ["taskprint"]
+
+[tool.coverage.report]
+fail_under = 85
+show_missing = true
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+packages = ["taskprint"]
+
+[tool.bandit]
+exclude_dirs = ["tests"]

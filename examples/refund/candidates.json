@@ -1,0 +1,30 @@
+{
+  "candidates": [
+    {
+      "name": "manual-review-first",
+      "observations": [
+        {
+          "trace": {"success": true},
+          "outcome": {"review_minutes": 12, "unauthorized_refunds": 0}
+        },
+        {
+          "trace": {"success": true},
+          "outcome": {"review_minutes": 10, "unauthorized_refunds": 0}
+        }
+      ]
+    },
+    {
+      "name": "policy-check-first",
+      "observations": [
+        {
+          "trace": {"success": true},
+          "outcome": {"review_minutes": 3, "unauthorized_refunds": 0}
+        },
+        {
+          "trace": {"success": true},
+          "outcome": {"review_minutes": 2, "unauthorized_refunds": 0}
+        }
+      ]
+    }
+  ]
+}

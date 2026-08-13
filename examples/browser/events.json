@@ -1,0 +1,7 @@
+[
+  {"event": "navigate", "url": "https://support.example.test/new"},
+  {"event": "fill", "selector": "#email", "value": "customer@example.test"},
+  {"event": "fill", "selector": "#password", "value": "will-be-redacted"},
+  {"event": "select", "selector": "#topic", "value": "billing"},
+  {"event": "click", "selector": "button[type=submit]"}
+]

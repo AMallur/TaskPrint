@@ -1,0 +1,486 @@
+{
+  "$defs": {
+    "ConstraintEnforcement": {
+      "enum": [
+        "block",
+        "review",
+        "warn"
+      ],
+      "title": "ConstraintEnforcement",
+      "type": "string"
+    },
+    "ConstraintOperator": {
+      "enum": [
+        "eq",
+        "ne",
+        "gt",
+        "gte",
+        "lt",
+        "lte",
+        "in",
+        "not_in",
+        "exists"
+      ],
+      "title": "ConstraintOperator",
+      "type": "string"
+    },
+    "ConstraintPhase": {
+      "enum": [
+        "before_action",
+        "after_action",
+        "outcome"
+      ],
+      "title": "ConstraintPhase",
+      "type": "string"
+    },
+    "EventKind": {
+      "enum": [
+        "observe",
+        "input",
+        "action",
+        "decision",
+        "output",
+        "human"
+      ],
+      "title": "EventKind",
+      "type": "string"
+    },
+    "ObjectiveDirection": {
+      "enum": [
+        "maximize",
+        "minimize"
+      ],
+      "title": "ObjectiveDirection",
+      "type": "string"
+    },
+    "ObjectiveMetric": {
+      "additionalProperties": false,
+      "description": "A measurable definition of a good workflow outcome.\n\n``target`` is the desired value and ``unacceptable`` is the zero-score\nboundary. Values between them receive a linear desirability score.",
+      "properties": {
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "direction": {
+          "$ref": "#/$defs/ObjectiveDirection"
+        },
+        "name": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "source": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Source",
+          "type": "string"
+        },
+        "target": {
+          "title": "Target",
+          "type": "number"
+        },
+        "unacceptable": {
+          "title": "Unacceptable",
+          "type": "number"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit"
+        },
+        "weight": {
+          "default": 1,
+          "exclusiveMinimum": 0,
+          "maximum": 1000000,
+          "title": "Weight",
+          "type": "number"
+        }
+      },
+      "required": [
+        "name",
+        "source",
+        "direction",
+        "target",
+        "unacceptable"
+      ],
+      "title": "ObjectiveMetric",
+      "type": "object"
+    },
+    "OutcomeConstraint": {
+      "additionalProperties": false,
+      "description": "A non-negotiable rule evaluated against execution or outcome context.",
+      "properties": {
+        "action": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Action"
+        },
+        "description": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "enforcement": {
+          "$ref": "#/$defs/ConstraintEnforcement",
+          "default": "block"
+        },
+        "expected": {
+          "default": null,
+          "title": "Expected"
+        },
+        "id": {
+          "pattern": "^[A-Za-z][A-Za-z0-9_.-]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "missing_passes": {
+          "default": false,
+          "title": "Missing Passes",
+          "type": "boolean"
+        },
+        "operator": {
+          "$ref": "#/$defs/ConstraintOperator"
+        },
+        "phase": {
+          "$ref": "#/$defs/ConstraintPhase",
+          "default": "outcome"
+        },
+        "source": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Source",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "description",
+        "source",
+        "operator"
+      ],
+      "title": "OutcomeConstraint",
+      "type": "object"
+    },
+    "OutcomeContract": {
+      "additionalProperties": false,
+      "description": "The objective function and hard boundaries for a learned workflow.",
+      "properties": {
+        "constraints": {
+          "items": {
+            "$ref": "#/$defs/OutcomeConstraint"
+          },
+          "title": "Constraints",
+          "type": "array"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 5000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "objectives": {
+          "items": {
+            "$ref": "#/$defs/ObjectiveMetric"
+          },
+          "minItems": 1,
+          "title": "Objectives",
+          "type": "array"
+        }
+      },
+      "required": [
+        "objectives"
+      ],
+      "title": "OutcomeContract",
+      "type": "object"
+    },
+    "WorkflowEdge": {
+      "additionalProperties": false,
+      "properties": {
+        "condition": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Condition"
+        },
+        "confidence": {
+          "default": 0,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "failure_count": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Failure Count",
+          "type": "integer"
+        },
+        "is_cycle": {
+          "default": false,
+          "title": "Is Cycle",
+          "type": "boolean"
+        },
+        "observed_count": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Observed Count",
+          "type": "integer"
+        },
+        "probability": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Probability",
+          "type": "number"
+        },
+        "source": {
+          "title": "Source",
+          "type": "string"
+        },
+        "success_count": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Success Count",
+          "type": "integer"
+        },
+        "target": {
+          "title": "Target",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source",
+        "target",
+        "probability"
+      ],
+      "title": "WorkflowEdge",
+      "type": "object"
+    },
+    "WorkflowNode": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Action",
+          "type": "string"
+        },
+        "confidence": {
+          "default": 0,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "failure_count": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Failure Count",
+          "type": "integer"
+        },
+        "id": {
+          "pattern": "^[A-Za-z][A-Za-z0-9_.-]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/$defs/EventKind"
+        },
+        "observed_count": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Observed Count",
+          "type": "integer"
+        },
+        "parameters": {
+          "additionalProperties": true,
+          "title": "Parameters",
+          "type": "object"
+        },
+        "required": {
+          "default": true,
+          "title": "Required",
+          "type": "boolean"
+        },
+        "success_count": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Success Count",
+          "type": "integer"
+        },
+        "support": {
+          "default": 0,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Support",
+          "type": "number"
+        },
+        "target": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target"
+        },
+        "variants": {
+          "additionalProperties": {
+            "items": {},
+            "type": "array"
+          },
+          "title": "Variants",
+          "type": "object"
+        }
+      },
+      "required": [
+        "id",
+        "action",
+        "kind"
+      ],
+      "title": "WorkflowNode",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "An editable workflow induced from demonstrations.",
+  "properties": {
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "edges": {
+      "items": {
+        "$ref": "#/$defs/WorkflowEdge"
+      },
+      "title": "Edges",
+      "type": "array"
+    },
+    "failed_trace_count": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Failed Trace Count",
+      "type": "integer"
+    },
+    "metadata": {
+      "additionalProperties": true,
+      "title": "Metadata",
+      "type": "object"
+    },
+    "name": {
+      "maxLength": 200,
+      "minLength": 1,
+      "title": "Name",
+      "type": "string"
+    },
+    "nodes": {
+      "items": {
+        "$ref": "#/$defs/WorkflowNode"
+      },
+      "minItems": 1,
+      "title": "Nodes",
+      "type": "array"
+    },
+    "outcome_contract": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/OutcomeContract"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "schema_version": {
+      "const": "taskprint/1.0",
+      "default": "taskprint/1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "start": {
+      "title": "Start",
+      "type": "string"
+    },
+    "successful_trace_count": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Successful Trace Count",
+      "type": "integer"
+    },
+    "task": {
+      "maxLength": 500,
+      "minLength": 1,
+      "title": "Task",
+      "type": "string"
+    },
+    "terminals": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Terminals",
+      "type": "array"
+    },
+    "trace_count": {
+      "minimum": 1,
+      "title": "Trace Count",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "name",
+    "task",
+    "nodes",
+    "start",
+    "terminals",
+    "trace_count"
+  ],
+  "title": "Workflow",
+  "type": "object"
+}
