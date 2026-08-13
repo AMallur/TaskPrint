@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "If Taskprint supports your research or benchmark, please cite this software."
+title: "Taskprint: Outcome-Directed Workflow Induction"
+type: software
+authors:
+  - family-names: Mallur
+    given-names: Ashish
+    alias: AMallur
+repository-code: "https://github.com/AMallur/TaskPrint"
+url: "https://github.com/AMallur/TaskPrint"
+license: Apache-2.0
+version: 0.3.0
+date-released: 2026-08-12
+keywords:
+  - workflow induction
+  - AI agents
+  - process mining
+  - task demonstrations
+  - workflow optimization

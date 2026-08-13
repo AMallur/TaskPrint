@@ -3,6 +3,8 @@
 **Show Taskprint how work is done and define what good means. Get a constrained, measurable,
 executable workflow.**
 
+Created and maintained by [Ashish Mallur](https://github.com/AMallur).
+
 Taskprint is a Python framework for **workflow induction**: learning an explicit,
 reviewable workflow from successful and failed demonstrations of a task. Its Outcome Contract
 then separates imitation from optimization: workflows are scored by results, cost, time, human
